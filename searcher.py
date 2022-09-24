@@ -38,22 +38,28 @@ class Googleuploader:
     def uploadfile(self, filename):
         '''This accepts two type of files
         1. file that are in the same directory as it e.g picpicpictest.jpg
-        2. and file with proper location e.g C:/User/appdata/file/text.txt
-        the try bloock is meant to catch unicode error annd convert it to raw string before uploading the file
+        2. and file with full path e.g C:/User/appdata/file/text.txt
+            when working with path, please ensure converting to raw string as 
 
         '''
-        if isinstance(filename, str):
-            pass
-        else:
-            filename = str(filename)
-        try:
-            file1 = self.drive.CreateFile()
-            file1.SetContentFile(filename)
-        except SyntaxError:
+        
+        
 
-            rawfilename = r'{}'.format(filename)
-            filename = rawfilename.split("\\")
-            file1 = self.drive.CreateFile({'title':filename[-1]})
+        if '\\' in filename:
+            #filename = r'{}'.format(filename)
+            name = filename.split("\\")
+            file1 = self.drive.CreateFile({'title':name[-1]})
+
+        else:
+            file1 = self.drive.CreateFile()
+
+        file1.SetContentFile(filename)
+        # except SyntaxError:
+
+        #     rawfilename = r'{}'.format(filename)
+        #     filename = rawfilename.split("\\")
+        #     file1 = self.drive.CreateFile({'title':filename[-1]})
+        #     file1 = self.drive.SetContentFile(rawfilename)
         file1.Upload()
 
 
@@ -91,3 +97,9 @@ class Googleuploader:
         if self.fileInDrive(title):
             file = self.drive.CreateFile({'title': title})
             file.GetContentFile(title)
+
+
+
+app = Googleuploader()
+app.uploadfile(r'C:\Users\GAHDLOOT\Documents\courses\RESUME-NEW.pdf')
+print(app.listOfFiles())
